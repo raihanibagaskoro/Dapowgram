@@ -1,11 +1,33 @@
 const { User, Post, Comment, Profile } = require('../models/index')
 const bcrypt = require('bcryptjs')
 const multer = require('multer')
+const session = require('express-session')
 
 
 class Controller{
+    static indexPage(req, res){
+        res.render('index')
+    }
     static homePage(req, res) {
-        res.render('home')
+        const id = req.session.userId
+        User.findOne({
+            where: { id }
+        })
+        .then(dataUser => {
+            const UserId = dataUser.id
+            return Post.findAll({
+                include: [User, Comment],
+                where: {
+                    UserId
+                }
+            })
+        })
+        .then(data => {
+            res.render('home', { data })
+        })
+        .catch(err => {
+            res.send(err)
+        })
     }
     // get register
     static registerform(req, res) {
@@ -17,6 +39,13 @@ class Controller{
         const { username, password, role} = req.body
         User.create({
             username, password, role
+        })
+        .then(data => {
+            const UserId = data.id
+            const {fullName, bio, hobby} = ""
+            return Profile.create({
+                fullName, bio, hobby, UserId
+            })
         })
         .then(newUser => {
             res.redirect('/login')
@@ -53,7 +82,6 @@ class Controller{
                 if (validPassword) {
                     // case user berhasil login
                     // console.log("berhasil login");
-
                     req.session.userId = user.id
                     req.session.role = user.role  // set session di login
                     return res.redirect('/home')
@@ -70,6 +98,58 @@ class Controller{
             res.send(err)
         })
 
+    }
+
+    static profilePage(req, res){
+        const UserId = req.session.userId
+        // console.log(req.session);
+        // console.log(UserId);
+        Profile.findOne({
+            include: [User],
+            where: {
+                UserId
+            }
+        })
+        .then(data => {
+            res.render("profilePage", {data})
+        })
+        .catch(err => {
+            res.send(err)
+        })
+    }
+
+    static getEditBio(req, res){
+        const UserId = req.session.userId
+        Profile.findOne({
+            where: {
+                UserId
+            }
+        })
+        .then(data => {
+            res.render("editBio", {data})
+        })
+        .catch(err => {
+            res.send(err)
+        })
+    }
+
+    static postGetBio(req, res){
+        // const UserId = req.session.userId
+        const id = +req.params.id
+        const {fullName, bio, hobby} = req.body
+        Profile.update({
+            fullName, bio, hobby
+        },
+        {
+            where: {id}
+        }
+        )
+        .then(() => {
+            res.redirect(`/profile`)
+        })
+        .catch(err => {
+            res.send(err)
+        })
     }
 
     static logout(req, res) {
@@ -101,33 +181,12 @@ class Controller{
         res.render('auth-pages/post')
     }
 
-    static listPost(req, res) {
-        const id = req.session.userId
-        User.findOne({
-            where: { id }
-        })
-        .then(dataUser => {
-            const UserId = dataUser.id
-            return Post.findAll({
-                include: [User, Comment],
-                where: {
-                    UserId
-                }
-            })
-        })
-        .then(data => {
-            res.render('auth-pages/listPage', { data })
-        })
-        .catch(err => {
-            res.send(err)
-        })
-    }
 
     static detailPost(req, res) {
         const id = req.params.id
         Post.findOne({
             where: { id },
-            include: [Comment]
+            include: [User, Comment]
         })
         .then(data => {
             res.render('auth-pages/detailpost', { data })
@@ -140,6 +199,8 @@ class Controller{
     static addComment(req, res) {
         const PostId = req.params.id
         const UserId = req.params.UserId
+        console.log(UserId);
+        console.log(req.session);
         const { content } = req.body
         Comment.create({
             content, PostId, UserId
@@ -153,18 +214,18 @@ class Controller{
     }
 
 
-    // static deletePost(req, res) {
-    //     const id = req.params.id
-    //     Post.destroy({
-    //         where : id
-    //     })
-    //     .then(data => {
-    //         res.redirect()
-    //     })
-    //     .catch(err => {
-    //         res.send(err)
-    //     })
-    // }
+    static deletePost(req, res) {
+        const id = req.params.id
+        Post.destroy({
+            where : {id}
+        })
+        .then(() => {
+            res.redirect('/home')
+        })
+        .catch(err => {
+            res.send(err)
+        })
+    }
 
 
 

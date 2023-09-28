@@ -23,8 +23,30 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Username required'
+        },
+        notEmpty: {
+          msg: 'Username required'
+        }
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Password required'
+        },
+        notEmpty: {
+          msg: 'Password required'
+        }
+      }
+    },
     role: DataTypes.STRING
   }, {
     hooks: {
