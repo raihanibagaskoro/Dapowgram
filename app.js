@@ -3,6 +3,8 @@ const Controller = require('./controllers/controller')
 const app = express()
 const port = 3000
 const session = require('express-session')
+const path = require('path')
+const multer = require('multer')
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
@@ -25,9 +27,6 @@ app.post('/login', Controller.postlogin)
 app.get('/logout', Controller.logout)
 
 
-
-
-
 app.use(function (req, res, next) {
     if (!req.session.userId) {
         const error = "please login first"
@@ -38,20 +37,34 @@ app.use(function (req, res, next) {
 
 })
 
-// app.use(function (req, res, next) {
-//     if (req.session.userId && req.session.role !== 'user') {
-//         const error = "you have no acces"
-//         res.redirect(`/login?error=${error}`)
-//     } else {
-//         next()
-//     }
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+      callback(null, 'Images')
+  },
+  filename: (req, file, callback) => {
+      console.log(file)
+      callback(null, Date.now() + '-' + file.originalname)
+  }
+})
 
-// })
+const upload = multer({ storage: storage})
 
+app.get('/Images/:imageName', (req, res) => {
+  const imageName = req.params.imageName
+  const imagePath = path.join(__dirname, 'Images', imageName)
+  res.sendFile(imagePath)
+})
+
+app.get('/upload', Controller.uploadPage)
+app.post('/upload', upload.single("fileName"), Controller.uploadPost)
+app.get('/listpost', Controller.listPost)
 app.get('/home', Controller.homePage)
+app.get('/detailpost/:id', Controller.detailPost)
 
 
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
+
+

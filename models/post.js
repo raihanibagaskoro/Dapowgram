@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Post.init({
     title: DataTypes.STRING,
-    fileName: DataTypes.STRING,
+    fileName: DataTypes.BLOB("long"),
     theme: DataTypes.STRING,
     UserId: DataTypes.INTEGER
   }, {
