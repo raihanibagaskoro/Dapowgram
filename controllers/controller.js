@@ -137,6 +137,35 @@ class Controller{
         })
     }
 
+    static addComment(req, res) {
+        const PostId = req.params.id
+        const UserId = req.params.UserId
+        const { content } = req.body
+        Comment.create({
+            content, PostId, UserId
+        })
+        .then(data => {
+            res.redirect(`/detailpost/${PostId}`)
+        })
+        .catch(err => {
+            res.send(err)
+        })
+    }
+
+
+    // static deletePost(req, res) {
+    //     const id = req.params.id
+    //     Post.destroy({
+    //         where : id
+    //     })
+    //     .then(data => {
+    //         res.redirect()
+    //     })
+    //     .catch(err => {
+    //         res.send(err)
+    //     })
+    // }
+
 
 
 }

@@ -60,6 +60,7 @@ app.post('/upload', upload.single("fileName"), Controller.uploadPost)
 app.get('/listpost', Controller.listPost)
 app.get('/home', Controller.homePage)
 app.get('/detailpost/:id', Controller.detailPost)
+app.post('/detailpost/:id', Controller.addComment)
 
 
 
