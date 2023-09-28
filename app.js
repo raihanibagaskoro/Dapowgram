@@ -6,13 +6,11 @@ const port = 3000
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({extended: true}))
 
-app.get('/', (req, res) => {
-  res.redirect('loginPage')
-})
-app.get('/register', Controller.getRegister)
-app.post('/register', Controller.postRegister)
-app.get('/login', Controller.getLogin)
-app.post('/login')
+app.get('/', Controller.homePage)
+app.get('/register', Controller.registerform)
+app.post('/register', Controller.postregister)
+app.get('/login', Controller.loginform)
+app.post('/login', Controller.postlogin)
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
