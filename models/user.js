@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       beforeCreate(instance, options){
         const salt = bcrypt.genSaltSync(8)
         const hash = bcrypt.hashSync(instance.password, salt)
+        instance.password = hash
       }
     },
     sequelize,
