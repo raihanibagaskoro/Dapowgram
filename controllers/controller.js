@@ -233,8 +233,20 @@ class Controller{
             res.send(err)
         })
     }
-
-
+    static addLike(req, res) {
+        const id = req.params.id;
+        let PostId;
+        Comment.findByPk(+id)
+            .then(comment => {
+                PostId = comment.PostId;
+                const like = comment.totalLike + 1;
+                return comment.update({totalLike: like});
+            })
+            .then(() => {
+                res.redirect('/detailpost/'+PostId);
+            })
+            .catch(err => res.send(err));
+    }
 
 }
 

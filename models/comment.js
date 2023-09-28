@@ -12,18 +12,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // Comment.belongsToMany(models.Post)
-      // Comment.belongsToMany(models.User)
+      Comment.belongsTo(models.Post);
+      Comment.belongsTo(models.User);
     }
     get time() {
       return published(this.createdAt)
     }
+    showRank() {
+      if(this.totalLike === 0) {
+        return "Suck!"
+      } else if (this.totalLike < 5) {
+        return "Better!"
+      } else {
+        return "God!"
+      }
+    }
   }
   Comment.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true
+    },
     content: DataTypes.STRING,
     PostId: DataTypes.INTEGER,
-    UserId: DataTypes.INTEGER
+    UserId: DataTypes.INTEGER,
+    totalLike: DataTypes.INTEGER
   }, {
+    hooks: {
+      beforeCreate(comment, option) {
+        comment.totalLike = 0;
+      }
+    },
     sequelize,
     modelName: 'Comment',
   });

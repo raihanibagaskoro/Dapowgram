@@ -72,6 +72,7 @@ app.get('/deletepost/:id', Controller.deletePost)
 app.get('/profile', Controller.profilePage)
 app.get('/editbio', Controller.getEditBio)
 app.post('/editbio/:id', Controller.postGetBio)
+app.get('/addLike/:id', Controller.addLike);
 
 
 
