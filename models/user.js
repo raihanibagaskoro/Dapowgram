@@ -17,18 +17,25 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Profile)
       User.hasMany(models.Post)
       User.hasMany(models.Comment)
+      User.belongsToMany(models.Post, {
+        through: models.Comment
+      })
     }
   }
   User.init({
     username: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    role: DataTypes.STRING
   }, {
     hooks: {
-      beforeCreate(instance, options){
+      beforeCreate: (instance, options) => {
         const salt = bcrypt.genSaltSync(8)
         const hash = bcrypt.hashSync(instance.password, salt)
 
+        console.log(instance)
+
         instance.password = hash
+        instance.role = "user"
       }
     },
     sequelize,

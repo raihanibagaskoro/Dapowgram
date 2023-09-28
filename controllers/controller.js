@@ -1,9 +1,11 @@
 const { User } = require('../models/index')
 const bcrypt = require('bcryptjs')
+const session = require('express-session')
+
 
 class Controller{
     static homePage(req, res) {
-        res.render('index')
+        res.render('home')
     }
     // get register
     static registerform(req, res) {
@@ -12,9 +14,9 @@ class Controller{
 
     // post register
     static postregister(req, res) {
-        const { username, password } = req.body
+        const { username, password, role} = req.body
         User.create({
-            username, password
+            username, password, role
         })
         .then(newUser => {
             res.redirect('/login')
@@ -39,7 +41,7 @@ class Controller{
         // -- kalo gak sama passwordnya, gak boleh masuk ke redirect home atau apalah/keluar error
         // -- kalo passwordnya sesuai, maka berhasil redirect
 
-        const { username, password } = req.body
+        const { username, password} = req.body
         User.findOne({
             where: {
                 username
@@ -50,10 +52,11 @@ class Controller{
                 const validPassword = bcrypt.compareSync(password, user.password)
                 if (validPassword) {
                     // case user berhasil login
+                    // console.log("berhasil login");
 
                     req.session.userId = user.id
                     req.session.role = user.role  // set session di login
-                    return res.redirect('/')
+                    return res.redirect('/home')
                 } else {
                     const error = "invalid password"
                     return res.redirect(`/login?error=${error}`)
