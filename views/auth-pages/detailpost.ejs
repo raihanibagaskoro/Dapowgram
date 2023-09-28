@@ -10,7 +10,28 @@
 </head>
 
 <body>
-    <%- include('partials/header') %>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Dapowgram</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/profile">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/upload">Add Post</a>
+              </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            
+        </div>
+    </nav>
     <div class="container mt-3">
         <div class="row mb-4">
             <div class="col-md-6 mb-4">
@@ -19,18 +40,16 @@
                     <div class="card-body">
                             <h5 class="card-title"><%= data.title %></h5>
                             <p class="card-text"><%= data.theme %></p>
-                            <p class="card-text">Posted: <%= data.createdAt %> ago</p>
-                            <p class="card-text">Posted by <%= data.User.username %></p>
+                            <p class="card-text">Posted by: <%= data.User.username %> - <%= published(data.createdAt) %></p>
                         </div>
                         <div class="card-footer">
                             <h6>Comments</h6>
                             <ul class="list-group">
                                 <% data.Comments.forEach(el => { %>
-                                    <li class="list-group-item"><%= el.content %></li>
-                                    <% }) %>
+                                    <li class="list-group-item"><%= data.User.username %>: <%= el.content %> <p class="text-right"><%= el.time %></p></li>
+                                <% }) %>
                                 </ul>
                             <div class="modal-body">
-                                <% console.log(data); %>
                                 <form method="post" action="/detailpost/<%= data.id %>">
                                     <div class="form-group">
                                         <textarea class="form-control" id="commentText" rows="3" name="content"></textarea>

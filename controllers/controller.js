@@ -1,24 +1,31 @@
 const { User, Post, Comment, Profile } = require('../models/index')
 const bcrypt = require('bcryptjs')
-const multer = require('multer')
-const session = require('express-session')
+const {published} = require('../helpers/helper');
+const { Op } = require('sequelize');
 
 
 class Controller{
     static indexPage(req, res){
         res.render('index')
     }
-    static homePage(req, res) {
-        const id = req.session.userId
+    static homePage(req, res){
+        const title = req.query.title;
+        const id = req.session.userId;
+        const option = {}
+        if(title) {
+            option.title = {
+                [Op.iLike]: `%${title}%`
+            }
+        }
         User.findOne({
-            where: { id }
+            where: { id}
         })
         .then(dataUser => {
             const UserId = dataUser.id
             return Post.findAll({
                 include: [User, Comment],
                 where: {
-                    UserId
+                    UserId, ...option
                 }
             })
         })
@@ -184,12 +191,12 @@ class Controller{
 
     static detailPost(req, res) {
         const id = req.params.id
-        Post.findOne({
-            where: { id },
+        Post.findByPk(id, {
             include: [User, Comment]
         })
         .then(data => {
-            res.render('auth-pages/detailpost', { data })
+            console.log(data.Comments);
+            res.render('auth-pages/detailpost', { data, published})
         })
         .catch(err => {
             res.send(err)
@@ -197,18 +204,18 @@ class Controller{
     }
 
     static addComment(req, res) {
-        const PostId = req.params.id
-        const UserId = req.params.UserId
-        console.log(UserId);
-        console.log(req.session);
+        const PostId = +req.params.id
+        const UserId = req.session.userId
         const { content } = req.body
+        console.log(req.session.UserId);
         Comment.create({
             content, PostId, UserId
         })
-        .then(data => {
+        .then(() => {
             res.redirect(`/detailpost/${PostId}`)
         })
         .catch(err => {
+            console.log(err);
             res.send(err)
         })
     }

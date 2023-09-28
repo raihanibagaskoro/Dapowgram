@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const {published} =require('../helpers/helper');    
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     /**
@@ -13,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       // Comment.belongsToMany(models.Post)
       // Comment.belongsToMany(models.User)
+    }
+    get time() {
+      return published(this.createdAt)
     }
   }
   Comment.init({
