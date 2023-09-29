@@ -9,8 +9,6 @@ const multer = require('multer')
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
 
-
-
 app.use(session({
     secret: 'this is secret',
     resave: false,
@@ -22,27 +20,22 @@ app.use(session({
 }))
 
 
-
 app.get('/register', Controller.registerform)
 app.post('/register', Controller.postregister)
 app.get('/login', Controller.loginform)
 app.post('/login', Controller.postlogin)
 app.get('/logout', Controller.logout)
-
-
 app.get('/', Controller.indexPage)
 
+// app.use(function (req, res, next) {
+//     if (!req.session.userId) {
+//         const error = "please login first"
+//         res.redirect(`/login?error=${error}`)
+//     } else {
+//         next()
+//     }
 
-app.use(function (req, res, next) {
-    
-    if (!req.session.userId) {
-        const error = "please login first"
-        res.redirect(`/login?error=${error}`)
-    } else {
-        next()
-    }
-
-})
+// })
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -68,13 +61,10 @@ app.get('/home', Controller.homePage)
 app.get('/detailpost/:id', Controller.detailPost)
 app.post('/detailpost/:id', Controller.addComment)
 app.get('/deletepost/:id', Controller.deletePost)
-
 app.get('/profile', Controller.profilePage)
 app.get('/editbio', Controller.getEditBio)
 app.post('/editbio/:id', Controller.postGetBio)
-app.get('/addLike/:id', Controller.addLike);
-
-
+// app.get('/addLike/:id', Controller.addLike)
 
 
 app.listen(port, () => {

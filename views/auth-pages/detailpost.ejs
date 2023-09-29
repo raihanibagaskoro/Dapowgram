@@ -46,7 +46,6 @@
                             <h6>Comments</h6>
                             <ul class="list-group">
                                 <% data.Comments.forEach(el => { %>
-                                    <% console.log(el) %>
                                     <li class="list-group-item"><%= data.User.username %>: <%= el.content %> <p class="text-right"><%= el.time %></p>
                                     <div>
                                         <%= el.totalLike  %> <%= el.showRank() %><a class="text-right" href="/addLike/<%= el.id %>"> Like</a>

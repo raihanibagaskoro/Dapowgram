@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Profile)
       User.hasMany(models.Post)
       User.hasMany(models.Comment)
-      User.belongsToMany(models.Post, {
-        through: models.Comment
-      })
+      // User.belongsToMany(models.Post, {
+      //   through: models.Comment
+      // })
     }
   }
   User.init({

@@ -18,7 +18,7 @@ class Controller{
             }
         }
         User.findOne({
-            where: { id}
+            where: { id } 
         })
         .then(dataUser => {
             const UserId = dataUser.id
